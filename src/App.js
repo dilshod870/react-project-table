@@ -17,7 +17,8 @@ class App extends React.Component {
         sort: 'asc',
         sortField: 'id',
         row:null,
-        currentPage:0
+        currentPage:0,
+        search:''
     }
 
     async fetchData(url) {
@@ -65,14 +66,31 @@ class App extends React.Component {
         //console.log(page.selected);
     }
 
+    searchHandler = (search) => {
+        console.log(search);
+    }
+
+    getFilteredData = () => {
+        const {data,search} = this.state;
+
+        if(!search) {
+            return data;
+        }
+
+        return data.filter(item => {
+            return item['firstName'].toLowerCase().includes(search.toLowerCase());
+        })
+    }
+
     render() {
 
         const pageSize = 10;
 
         const pageCount = this.state.data.length / pageSize;
 
+        const filteredData = this.getFilteredData();
 
-        const displayData = lodash.chunk(this.state.data,pageSize)[this.state.currentPage]
+        const displayData = lodash.chunk(filteredData,pageSize)[this.state.currentPage];
 
         if (!this.state.isModeSelect){
             return (
@@ -87,7 +105,7 @@ class App extends React.Component {
                     this.state.isLoading
                     ? <Loader/>
                     : <React.Fragment>
-                        <TableSearch/>
+                        <TableSearch onSearch={this.searchHandler}/>
                         <Table
                             data={displayData}
                             onSort={this.onSort}
@@ -117,6 +135,7 @@ class App extends React.Component {
                             nextClassName={"page-item"}
                             previousLinkClassName={"page-link"}
                             nextLinkClassName={"page-link"}
+                            forcePage={this.state.currentPage}
                         />
                         :null
                 }
