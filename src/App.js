@@ -67,6 +67,7 @@ class App extends React.Component {
     }
 
     searchHandler = (search) => {
+        this.setState({search,currentPage:0})
         console.log(search);
     }
 
@@ -86,9 +87,11 @@ class App extends React.Component {
 
         const pageSize = 10;
 
-        const pageCount = this.state.data.length / pageSize;
+
 
         const filteredData = this.getFilteredData();
+
+        const pageCount = Math.ceil(filteredData.length / pageSize);
 
         const displayData = lodash.chunk(filteredData,pageSize)[this.state.currentPage];
 
